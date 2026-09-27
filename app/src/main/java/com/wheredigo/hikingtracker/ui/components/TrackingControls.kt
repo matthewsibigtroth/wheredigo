@@ -12,16 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,16 +33,14 @@ import com.wheredigo.hikingtracker.R
 import com.wheredigo.hikingtracker.ui.theme.CrimsonStopButton
 import com.wheredigo.hikingtracker.ui.theme.DeepForestText
 import com.wheredigo.hikingtracker.ui.theme.EmeraldStartButton
-import com.wheredigo.hikingtracker.ui.theme.SoftMintContainer
 
 /**
- * Bottom controls featuring the prominent Start/Stop Pill Button (#F8E602 / #FFDCB9) and Mint Map Recenter FAB (#C2ECD4).
+ * Bottom controls featuring the prominent Start/Stop Pill Button (#F8E602 / #FFDCB9).
  */
 @Composable
 fun TrackingControls(
     isTracking: Boolean,
     onToggleTracking: () -> Unit,
-    onRecenterMap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val buttonColor by animateColorAsState(
@@ -99,25 +93,6 @@ fun TrackingControls(
                     letterSpacing = 1.2.sp
                 )
             }
-        }
-
-        // Recenter My Location FAB on the right in Soft Mint (#C2ECD4)
-        FloatingActionButton(
-            onClick = onRecenterMap,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .size(52.dp),
-            shape = CircleShape,
-            containerColor = SoftMintContainer,
-            contentColor = DeepForestText,
-            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.MyLocation,
-                contentDescription = "Recenter Map",
-                tint = DeepForestText,
-                modifier = Modifier.size(24.dp)
-            )
         }
     }
 }

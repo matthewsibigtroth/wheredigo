@@ -12,15 +12,13 @@ import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.extension.compose.annotation.generated.PolylineAnnotationGroup
 import com.mapbox.maps.extension.compose.style.MapStyle
-import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.rasterDemSource
 import com.mapbox.maps.extension.style.terrain.generated.Terrain
 import com.mapbox.maps.extension.style.terrain.generated.setTerrain
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
+import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.locationcomponent.location
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Jetpack Compose wrapper for Mapbox Maps SDK v11.
@@ -29,14 +27,13 @@ import kotlinx.coroutines.flow.collectLatest
  * - 3D Terrain DEM with elevation exaggeration for realistic mountain relief
  * - 60-degree camera pitch angle for 3D perspective
  * - Continuous Polyline path drawing for active hike
- * - Smooth camera following user movements and recenter event handling
+ * - Smooth camera following user movements
  */
 @Composable
 fun MapboxHikingMap(
     pathPoints: List<Point>,
     latestPoint: Point?,
     isTracking: Boolean,
-    recenterEvents: SharedFlow<Point>,
     modifier: Modifier = Modifier
 ) {
     // Initial camera: high pitch (60 deg) for 3D terrain emphasis
@@ -48,23 +45,7 @@ fun MapboxHikingMap(
         }
     }
 
-    // Handle manual recenter camera requests
-    LaunchedEffect(recenterEvents) {
-        recenterEvents.collectLatest { targetPoint ->
-            mapViewportState.easeTo(
-                cameraOptions = cameraOptions {
-                    center(targetPoint)
-                    pitch(60.0)
-                    zoom(16.5)
-                },
-                animationOptions = MapAnimationOptions.mapAnimationOptions {
-                    duration(1200)
-                }
-            )
-        }
-    }
-
-    // Smoothly follow latest location during active tracking
+    // Smoothly follow latest location
     LaunchedEffect(latestPoint, isTracking) {
         if (latestPoint != null) {
             mapViewportState.easeTo(

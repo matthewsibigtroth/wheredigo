@@ -56,7 +56,6 @@ fun HikingTrackerScreen(
                 pathPoints = uiState.pathPoints,
                 latestPoint = uiState.latestPoint,
                 isTracking = uiState.isTracking,
-                recenterEvents = viewModel.recenterCameraEvents,
                 modifier = Modifier.fillMaxSize()
             )
 
@@ -75,15 +74,11 @@ fun HikingTrackerScreen(
                     )
             )
 
-            // Bottom Controls: Start/Stop Pill Action Button + Recenter FAB
+            // Bottom Controls: Start/Stop Pill Action Button
             TrackingControls(
                 isTracking = uiState.isTracking,
                 onToggleTracking = {
                     viewModel.toggleTracking(context)
-                },
-                onRecenterMap = {
-                    viewModel.fetchCurrentLocation(context)
-                    viewModel.requestRecenter()
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

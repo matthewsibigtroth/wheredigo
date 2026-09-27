@@ -9,14 +9,10 @@ import com.wheredigo.hikingtracker.data.HikingRepository
 import com.wheredigo.hikingtracker.data.HikingSessionState
 import com.wheredigo.hikingtracker.service.HikingService
 import com.wheredigo.hikingtracker.utils.Formatters
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 /**
  * UI State exposed to the Jetpack Compose layer.
@@ -39,10 +35,6 @@ data class HikingUiState(
  * ViewModel managing UI state and user interactions for the hiking tracker screen.
  */
 class HikingViewModel : ViewModel() {
-
-    // One-time events for UI (e.g. camera recenter requests)
-    private val _recenterCameraEvents = MutableSharedFlow<Point>(extraBufferCapacity = 1)
-    val recenterCameraEvents: SharedFlow<Point> = _recenterCameraEvents.asSharedFlow()
 
     val uiState: StateFlow<HikingUiState> = HikingRepository.sessionState
         .map { session: HikingSessionState ->
@@ -84,9 +76,6 @@ class HikingViewModel : ViewModel() {
         fusedClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 HikingRepository.onLocationUpdate(location)
-                viewModelScope.launch {
-                    _recenterCameraEvents.emit(com.wheredigo.hikingtracker.utils.LocationUtils.toMapboxPoint(location))
-                }
             } else {
                 val tokenSource = com.google.android.gms.tasks.CancellationTokenSource()
                 fusedClient.getCurrentLocation(
@@ -95,9 +84,6 @@ class HikingViewModel : ViewModel() {
                 ).addOnSuccessListener { currentLocation ->
                     currentLocation?.let {
                         HikingRepository.onLocationUpdate(it)
-                        viewModelScope.launch {
-                            _recenterCameraEvents.emit(com.wheredigo.hikingtracker.utils.LocationUtils.toMapboxPoint(it))
-                        }
                     }
                 }
             }
@@ -134,17 +120,6 @@ class HikingViewModel : ViewModel() {
             stopHike(context)
         } else {
             startHike(context)
-        }
-    }
-
-    /**
-     * Requests the map camera to smoothly recenter on the latest recorded user coordinate.
-     */
-    fun requestRecenter() {
-        uiState.value.latestPoint?.let { point ->
-            viewModelScope.launch {
-                _recenterCameraEvents.emit(point)
-            }
         }
     }
 }

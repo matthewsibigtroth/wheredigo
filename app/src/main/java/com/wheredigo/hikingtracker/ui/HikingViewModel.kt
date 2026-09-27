@@ -25,7 +25,7 @@ data class HikingUiState(
     val formattedTime: String = "00:00:00",
     val formattedDistance: String = "0.00 mi",
     val formattedAltitude: String = "0 ft",
-    val formattedCalories: String = "0 kcal",
+    val formattedCalories: String = "0 cal",
     val formattedSpeed: String = "0.0 mph",
     val formattedElevationGain: String = "+0 ft",
     val userWeightLbs: Double = com.wheredigo.hikingtracker.utils.CalorieCalculator.DEFAULT_WEIGHT_LBS

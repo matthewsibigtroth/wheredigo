@@ -51,10 +51,10 @@ object Formatters {
     }
 
     /**
-     * Formats calories burned into rounded integer kcal.
+     * Formats calories burned into rounded integer cal.
      */
     fun formatCalories(kcal: Double): String {
-        return String.format(Locale.US, "%d kcal", kcal.toInt())
+        return String.format(Locale.US, "%d cal", kcal.toInt())
     }
 
     /**

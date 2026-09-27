@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="2.5"
+        android:scaleY="2.5"
+        android:translateX="24"
+        android:translateY="24">
+        <!-- Mountain peaks and hiker icon -->
+        <path
+            android:fillColor="#00E676"
+            android:pathData="M14,6l-4.22,5.63 1.25,1.67L14,9.33 19,16h-4l-1,1.33H22L14,6zM5,16l4.5,-6L12,13.33 10.5,15.33 9.5,14 6.5,18h11l1,1.33H3L5,16z"/>
+    </group>
+</vector>

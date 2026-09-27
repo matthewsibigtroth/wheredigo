@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Whered I Go</string>
+
+    <!-- Mapbox Public Access Token is injected via app/build.gradle.kts from local.properties -->
+
+    <!-- Notification Strings -->
+    <string name="notification_channel_name">Hiking Tracker Service</string>
+    <string name="notification_channel_description">Displays ongoing hike stats and keeps GPS tracking active in the background</string>
+    <string name="notification_title_tracking">Hike in Progress</string>
+    <string name="notification_action_stop">Stop Hike</string>
+
+    <!-- UI Strings -->
+    <string name="start_hike">START HIKE</string>
+    <string name="stop_hike">STOP</string>
+    <string name="metric_time">TIME</string>
+    <string name="metric_distance">DISTANCE</string>
+    <string name="metric_altitude">ALTITUDE</string>
+    <string name="metric_calories">CALORIES</string>
+    <string name="metric_speed">SPEED</string>
+    <string name="metric_elev_gain">ELEV GAIN</string>
+
+    <!-- Permissions -->
+    <string name="permission_title">Permissions Required</string>
+    <string name="permission_description">Whered I Go requires Location and Notification permissions to track your hike, display 3D terrain, and calculate altitude and calories in the background.</string>
+    <string name="grant_permissions">Grant Permissions</string>
+</resources>

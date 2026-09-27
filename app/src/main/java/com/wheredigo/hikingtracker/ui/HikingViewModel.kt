@@ -28,7 +28,7 @@ data class HikingUiState(
     val rawMetrics: HikingMetrics = HikingMetrics(),
     val formattedTime: String = "00:00:00",
     val formattedDistance: String = "0.00 mi",
-    val formattedAltitude: String = "0 ft\n(0 m)",
+    val formattedAltitude: String = "0 ft",
     val formattedCalories: String = "0 kcal",
     val formattedSpeed: String = "0.0 mph",
     val formattedElevationGain: String = "+0 ft",

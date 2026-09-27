@@ -26,20 +26,20 @@ object Formatters {
     }
 
     /**
-     * Formats altitude in meters with imperial feet primary and meters secondary.
-     * e.g., "4,659 ft\n(1,420 m)"
+     * Formats altitude in feet.
+     * e.g., "4,659 ft"
      */
     fun formatAltitude(meters: Double): String {
         val feet = meters * 3.28084
-        return String.format(Locale.US, "%,d ft\n(%,d m)", feet.toInt(), meters.toInt())
+        return String.format(Locale.US, "%,d ft", feet.toInt())
     }
 
     /**
-     * Compact altitude string for cards / notifications.
+     * Compact altitude string for cards / notifications in feet.
      */
     fun formatAltitudeCompact(meters: Double): String {
         val feet = meters * 3.28084
-        return String.format(Locale.US, "%d ft / %d m", feet.toInt(), meters.toInt())
+        return String.format(Locale.US, "%d ft", feet.toInt())
     }
 
     /**

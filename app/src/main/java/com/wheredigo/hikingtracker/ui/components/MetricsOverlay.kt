@@ -132,7 +132,7 @@ fun MetricsOverlay(
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
                                 Text(
-                                    text = String.format(Locale.US, "Weight: %.0f lbs ✎", uiState.userWeightLbs),
+                                    text = String.format(Locale.US, "%.0f lbs", uiState.userWeightLbs),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = DeepForestText,
                                     fontSize = 11.sp,

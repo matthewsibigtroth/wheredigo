@@ -1,7 +1,16 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+}
+
+val localProps = Properties().apply {
+    val localPropsFile = rootProject.file("local.properties")
+    if (localPropsFile.exists()) {
+        load(localPropsFile.inputStream())
+    }
 }
 
 android {
@@ -15,12 +24,6 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        val localProps = java.util.Properties().apply {
-            val localPropsFile = rootProject.file("local.properties")
-            if (localPropsFile.exists()) {
-                load(localPropsFile.inputStream())
-            }
-        }
         val mapboxPublicToken = localProps.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
         resValue("string", "mapbox_access_token", mapboxPublicToken)
 

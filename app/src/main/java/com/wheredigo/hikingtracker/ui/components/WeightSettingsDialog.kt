@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,7 +42,6 @@ import com.wheredigo.hikingtracker.ui.theme.CrispWhiteSurface
 import com.wheredigo.hikingtracker.ui.theme.DeepForestText
 import com.wheredigo.hikingtracker.ui.theme.MutedForestText
 import com.wheredigo.hikingtracker.ui.theme.PastelSpringGreen
-import com.wheredigo.hikingtracker.ui.theme.SoftMintContainer
 import com.wheredigo.hikingtracker.ui.theme.SoftPeachAccent
 import com.wheredigo.hikingtracker.ui.theme.SurfaceCardBorder
 import com.wheredigo.hikingtracker.ui.theme.SurfaceGlassDark
@@ -52,7 +50,7 @@ import java.util.Locale
 
 /**
  * Dialog allowing the user to configure their body weight in pounds (lbs).
- * Styled with the pastel green, sage, mint, peach & yellow palette.
+ * Styled with the pastel green, sage, peach & yellow palette.
  */
 @Composable
 fun WeightSettingsDialog(
@@ -141,35 +139,6 @@ fun WeightSettingsDialog(
                     modifier = Modifier.fillMaxWidth(0.85f)
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Quick Increment/Decrement Buttons in Pounds (lbs)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    QuickWeightButton(label = "-5 lbs") {
-                        val current = weightInput.toDoubleOrNull() ?: currentWeightLbs
-                        weightInput = String.format(Locale.US, "%.0f", (current - 5.0).coerceAtLeast(40.0))
-                        isError = false
-                    }
-                    QuickWeightButton(label = "-1 lb") {
-                        val current = weightInput.toDoubleOrNull() ?: currentWeightLbs
-                        weightInput = String.format(Locale.US, "%.0f", (current - 1.0).coerceAtLeast(40.0))
-                        isError = false
-                    }
-                    QuickWeightButton(label = "+1 lb") {
-                        val current = weightInput.toDoubleOrNull() ?: currentWeightLbs
-                        weightInput = String.format(Locale.US, "%.0f", (current + 1.0).coerceAtMost(600.0))
-                        isError = false
-                    }
-                    QuickWeightButton(label = "+5 lbs") {
-                        val current = weightInput.toDoubleOrNull() ?: currentWeightLbs
-                        weightInput = String.format(Locale.US, "%.0f", (current + 5.0).coerceAtMost(600.0))
-                        isError = false
-                    }
-                }
-
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Action Buttons (Cancel in Peach / Save in Vibrant Yellow)
@@ -213,24 +182,5 @@ fun WeightSettingsDialog(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun QuickWeightButton(
-    label: String,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = SoftMintContainer,
-            contentColor = DeepForestText
-        ),
-        modifier = Modifier.height(38.dp),
-        contentPadding = PaddingValues(horizontal = 10.dp)
-    ) {
-        Text(text = label, color = DeepForestText, fontSize = 12.sp, fontWeight = FontWeight.Bold)
     }
 }

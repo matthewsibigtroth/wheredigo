@@ -48,7 +48,6 @@ import com.wheredigo.hikingtracker.ui.theme.SoftPeachAccent
 import com.wheredigo.hikingtracker.ui.theme.SurfaceCardBorder
 import com.wheredigo.hikingtracker.ui.theme.SurfaceGlassDark
 import com.wheredigo.hikingtracker.ui.theme.VibrantYellowButton
-import com.wheredigo.hikingtracker.utils.CalorieCalculator
 import java.util.Locale
 
 /**
@@ -61,11 +60,8 @@ fun WeightSettingsDialog(
     onDismiss: () -> Unit,
     onSaveWeight: (Double) -> Unit
 ) {
-    var weightInput by remember { mutableStateOf(String.format(Locale.US, "%.1f", currentWeightLbs)) }
+    var weightInput by remember { mutableStateOf(String.format(Locale.US, "%.0f", currentWeightLbs)) }
     var isError by remember { mutableStateOf(false) }
-
-    val currentInputDouble = weightInput.toDoubleOrNull()
-    val equivalentKg = currentInputDouble?.let { CalorieCalculator.lbsToKg(it) }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -98,7 +94,7 @@ fun WeightSettingsDialog(
                         )
                     }
                     Text(
-                        text = "User Weight",
+                        text = "Edit Weight (lbs)",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = DeepForestText
@@ -108,7 +104,7 @@ fun WeightSettingsDialog(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "Enter your weight in pounds (lbs) to accurately calculate calories burned based on hiking intensity and slope.",
+                    text = "Enter your weight in pounds (lbs) to personalize your hike calorie calculation.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MutedForestText,
                     textAlign = TextAlign.Center,
@@ -117,7 +113,7 @@ fun WeightSettingsDialog(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                // Weight Input Field
+                // Weight Input Field in Pounds (lbs)
                 OutlinedTextField(
                     value = weightInput,
                     onValueChange = { input ->
@@ -125,7 +121,8 @@ fun WeightSettingsDialog(
                         val parsed = input.toDoubleOrNull()
                         isError = parsed == null || parsed <= 30.0 || parsed >= 700.0
                     },
-                    label = { Text("Weight (lbs)") },
+                    label = { Text("Weight in Pounds (lbs)") },
+                    suffix = { Text("lbs", color = MutedForestText, fontWeight = FontWeight.SemiBold) },
                     singleLine = true,
                     isError = isError,
                     shape = RoundedCornerShape(16.dp),
@@ -144,42 +141,31 @@ fun WeightSettingsDialog(
                     modifier = Modifier.fillMaxWidth(0.85f)
                 )
 
-                // Live kg Conversion hint
-                if (equivalentKg != null && !isError) {
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = String.format(Locale.US, "≈ %.1f kg", equivalentKg),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = DeepForestText,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Quick Increment/Decrement Buttons in Soft Mint (#C2ECD4)
+                // Quick Increment/Decrement Buttons in Pounds (lbs)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    QuickWeightButton(label = "-5") {
+                    QuickWeightButton(label = "-5 lbs") {
                         val current = weightInput.toDoubleOrNull() ?: currentWeightLbs
-                        weightInput = String.format(Locale.US, "%.1f", (current - 5.0).coerceAtLeast(40.0))
+                        weightInput = String.format(Locale.US, "%.0f", (current - 5.0).coerceAtLeast(40.0))
                         isError = false
                     }
-                    QuickWeightButton(label = "-1") {
+                    QuickWeightButton(label = "-1 lb") {
                         val current = weightInput.toDoubleOrNull() ?: currentWeightLbs
-                        weightInput = String.format(Locale.US, "%.1f", (current - 1.0).coerceAtLeast(40.0))
+                        weightInput = String.format(Locale.US, "%.0f", (current - 1.0).coerceAtLeast(40.0))
                         isError = false
                     }
-                    QuickWeightButton(label = "+1") {
+                    QuickWeightButton(label = "+1 lb") {
                         val current = weightInput.toDoubleOrNull() ?: currentWeightLbs
-                        weightInput = String.format(Locale.US, "%.1f", (current + 1.0).coerceAtMost(600.0))
+                        weightInput = String.format(Locale.US, "%.0f", (current + 1.0).coerceAtMost(600.0))
                         isError = false
                     }
-                    QuickWeightButton(label = "+5") {
+                    QuickWeightButton(label = "+5 lbs") {
                         val current = weightInput.toDoubleOrNull() ?: currentWeightLbs
-                        weightInput = String.format(Locale.US, "%.1f", (current + 5.0).coerceAtMost(600.0))
+                        weightInput = String.format(Locale.US, "%.0f", (current + 5.0).coerceAtMost(600.0))
                         isError = false
                     }
                 }
@@ -222,7 +208,7 @@ fun WeightSettingsDialog(
                         ),
                         shape = RoundedCornerShape(20.dp)
                     ) {
-                        Text("Save Weight", fontWeight = FontWeight.Bold, color = DeepForestText)
+                        Text("Save (lbs)", fontWeight = FontWeight.Bold, color = DeepForestText)
                     }
                 }
             }
@@ -242,9 +228,9 @@ private fun QuickWeightButton(
             containerColor = SoftMintContainer,
             contentColor = DeepForestText
         ),
-        modifier = Modifier.height(40.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        modifier = Modifier.height(38.dp),
+        contentPadding = PaddingValues(horizontal = 10.dp)
     ) {
-        Text(text = label, color = DeepForestText, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+        Text(text = label, color = DeepForestText, fontSize = 12.sp, fontWeight = FontWeight.Bold)
     }
 }

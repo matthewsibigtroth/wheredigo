@@ -92,19 +92,19 @@ fun MetricsOverlay(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        // Clickable Weight Chip in Soft Peach (#FFDCB9)
+                        // Clickable Edit Weight Button in Soft Peach (#FFDCB9)
                         Surface(
                             onClick = onOpenWeightSettings,
                             shape = RoundedCornerShape(50),
                             color = SoftPeachAccent
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
                             ) {
                                 Text(
-                                    text = String.format(Locale.US, "%.0f lbs", uiState.userWeightLbs),
+                                    text = String.format(Locale.US, "Weight: %.0f lbs ✎", uiState.userWeightLbs),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = DeepForestText,
                                     fontSize = 11.sp,

@@ -5,10 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,12 +28,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wheredigo.hikingtracker.ui.HikingUiState
@@ -53,6 +63,10 @@ fun MetricsOverlay(
     onOpenWeightSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val density = LocalDensity.current
+    var maxCardHeightPx by remember { mutableIntStateOf(0) }
+    val uniformCardMinHeight: Dp = with(density) { maxCardHeightPx.toDp() }
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -143,26 +157,34 @@ fun MetricsOverlay(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // 2x2 Grid of Primary Metrics in Crisp White Tiles (#FFFFFF)
+            // 2x2 Grid of Primary Metrics in Crisp White Tiles (#FFFFFF) with identical icon colors & equal heights
             // Row 1: Time Elapsed & Distance Covered
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 MetricGridItem(
                     title = "TIME ELAPSED",
                     value = uiState.formattedTime,
                     icon = Icons.Rounded.Schedule,
-                    badgeColor = VibrantYellowButton,
-                    modifier = Modifier.weight(1f)
+                    minHeight = uniformCardMinHeight,
+                    onHeightMeasured = { h -> if (h > maxCardHeightPx) maxCardHeightPx = h },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
 
                 MetricGridItem(
                     title = "DISTANCE",
                     value = uiState.formattedDistance,
                     icon = Icons.Rounded.DirectionsWalk,
-                    badgeColor = SoftMintContainer,
-                    modifier = Modifier.weight(1f)
+                    minHeight = uniformCardMinHeight,
+                    onHeightMeasured = { h -> if (h > maxCardHeightPx) maxCardHeightPx = h },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
             }
 
@@ -170,23 +192,31 @@ fun MetricsOverlay(
 
             // Row 2: Altitude & Calories Burned
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 MetricGridItem(
                     title = "ALTITUDE",
                     value = uiState.formattedAltitude,
                     icon = Icons.Rounded.Terrain,
-                    badgeColor = PastelSpringGreen,
-                    modifier = Modifier.weight(1f)
+                    minHeight = uniformCardMinHeight,
+                    onHeightMeasured = { h -> if (h > maxCardHeightPx) maxCardHeightPx = h },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
 
                 MetricGridItem(
                     title = "CALORIES",
                     value = uiState.formattedCalories,
                     icon = Icons.Rounded.LocalFireDepartment,
-                    badgeColor = SoftPeachAccent,
-                    modifier = Modifier.weight(1f)
+                    minHeight = uniformCardMinHeight,
+                    onHeightMeasured = { h -> if (h > maxCardHeightPx) maxCardHeightPx = h },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
             }
 
@@ -228,22 +258,27 @@ private fun MetricGridItem(
     title: String,
     value: String,
     icon: ImageVector,
-    badgeColor: Color,
+    minHeight: Dp,
+    onHeightMeasured: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier
+            .heightIn(min = minHeight)
+            .onSizeChanged { onHeightMeasured(it.height) },
         shape = RoundedCornerShape(20.dp),
         color = CrispWhiteSurface
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
                     .size(38.dp)
-                    .background(badgeColor, CircleShape),
+                    .background(SoftMintContainer, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -256,7 +291,9 @@ private fun MetricGridItem(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            Column {
+            Column(
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.labelSmall,

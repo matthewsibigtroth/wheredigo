@@ -209,7 +209,6 @@ fun MetricsOverlay(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         MetricGridItem(
-                            title = "TIME ELAPSED",
                             value = uiState.formattedTime,
                             icon = Icons.Rounded.Schedule,
                             minHeight = uniformCardMinHeight,
@@ -220,7 +219,6 @@ fun MetricsOverlay(
                         )
 
                         MetricGridItem(
-                            title = "DISTANCE",
                             value = uiState.formattedDistance,
                             icon = Icons.Rounded.DirectionsWalk,
                             minHeight = uniformCardMinHeight,
@@ -241,7 +239,6 @@ fun MetricsOverlay(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         MetricGridItem(
-                            title = "ALTITUDE",
                             value = uiState.formattedAltitude,
                             icon = Icons.Rounded.Terrain,
                             minHeight = uniformCardMinHeight,
@@ -252,7 +249,6 @@ fun MetricsOverlay(
                         )
 
                         MetricGridItem(
-                            title = "CALORIES",
                             value = uiState.formattedCalories,
                             icon = Icons.Rounded.LocalFireDepartment,
                             minHeight = uniformCardMinHeight,
@@ -316,7 +312,6 @@ fun MetricsOverlay(
 
 @Composable
 private fun MetricGridItem(
-    title: String,
     value: String,
     icon: ImageVector,
     minHeight: Dp,
@@ -344,7 +339,7 @@ private fun MetricGridItem(
             ) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = title,
+                    contentDescription = null,
                     tint = DeepForestText,
                     modifier = Modifier.size(20.dp)
                 )
@@ -352,26 +347,14 @@ private fun MetricGridItem(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            Column(
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MutedForestText,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 0.5.sp
-                )
-                Text(
-                    text = value,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = DeepForestText,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp,
-                    lineHeight = 21.sp
-                )
-            }
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleLarge,
+                color = DeepForestText,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                lineHeight = 22.sp
+            )
         }
     }
 }

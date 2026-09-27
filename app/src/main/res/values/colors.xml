@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_forest_green">#2E7D32</color>
-    <color name="primary_emerald">#00C853</color>
-    <color name="stop_crimson">#D50000</color>
-    <color name="polyline_neon">#00E676</color>
-    <color name="polyline_outline">#004D40</color>
-    <color name="surface_card_dark">#D91C2321</color>
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#B0BEC5</color>
+    <color name="primary_forest_green">#AAF5A3</color>
+    <color name="primary_emerald">#F8E602</color>
+    <color name="stop_crimson">#FFDCB9</color>
+    <color name="polyline_neon">#AAF5A3</color>
+    <color name="polyline_outline">#171D16</color>
+    <color name="surface_card_dark">#ECF2E6</color>
+    <color name="text_primary">#171D16</color>
+    <color name="text_secondary">#4A5848</color>
 </resources>

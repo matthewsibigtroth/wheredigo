@@ -2,22 +2,33 @@ package com.wheredigo.hikingtracker.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Outdoor & Hiking Theme Palette
-val ForestGreenPrimary = Color(0xFF2E7D32)
-val ForestGreenLight = Color(0xFF60AD5E)
-val ForestGreenDark = Color(0xFF005005)
+// Pastel Mint, Spring Green, Peach & Yellow Palette
+val PastelSpringGreen = Color(0xFFAAF5A3)
+val SoftSageBackground = Color(0xFFECF2E6)
+val SoftMintContainer = Color(0xFFC2ECD4)
+val SoftPeachAccent = Color(0xFFFFDCB9)
+val VibrantYellowButton = Color(0xFFF8E602)
+val CrispWhiteSurface = Color(0xFFFFFFFF)
 
-val EmeraldStartButton = Color(0xFF00C853)
-val CrimsonStopButton = Color(0xFFD50000)
+val DeepForestText = Color(0xFF171D16)
+val MutedForestText = Color(0xFF4A5848)
 
-val TrailPolylineGreen = Color(0xFF00E676)
-val TrailPolylineOutline = Color(0xFF004D40)
+// Legacy / Semantic aliases used across components
+val ForestGreenPrimary = PastelSpringGreen
+val ForestGreenLight = SoftMintContainer
+val ForestGreenDark = DeepForestText
 
-val SurfaceGlassDark = Color(0xD9101815)
-val SurfaceCardBorder = Color(0x33FFFFFF)
+val EmeraldStartButton = VibrantYellowButton
+val CrimsonStopButton = SoftPeachAccent
 
-val TextPrimaryLight = Color(0xFFF1F8E9)
-val TextSecondaryLight = Color(0xFFB0BEC5)
-val AccentYellow = Color(0xFFFFD54F)
-val AccentCyan = Color(0xFF26C6DA)
-val AccentOrange = Color(0xFFFF8A65)
+val TrailPolylineGreen = Color(0xFFAAF5A3)
+val TrailPolylineOutline = Color(0xFF171D16)
+
+val SurfaceGlassDark = Color(0xF5ECF2E6)
+val SurfaceCardBorder = Color(0xFFD4E2CC)
+
+val TextPrimaryLight = DeepForestText
+val TextSecondaryLight = MutedForestText
+val AccentYellow = VibrantYellowButton
+val AccentCyan = SoftMintContainer
+val AccentOrange = SoftPeachAccent

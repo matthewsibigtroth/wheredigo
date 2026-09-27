@@ -29,18 +29,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wheredigo.hikingtracker.R
 import com.wheredigo.hikingtracker.ui.theme.CrimsonStopButton
+import com.wheredigo.hikingtracker.ui.theme.DeepForestText
 import com.wheredigo.hikingtracker.ui.theme.EmeraldStartButton
-import com.wheredigo.hikingtracker.ui.theme.SurfaceGlassDark
+import com.wheredigo.hikingtracker.ui.theme.SoftMintContainer
 
 /**
- * Bottom controls featuring the prominent Start/Stop Pill Button and the Map Recenter FAB.
+ * Bottom controls featuring the prominent Start/Stop Pill Button (#F8E602 / #FFDCB9) and Mint Map Recenter FAB (#C2ECD4).
  */
 @Composable
 fun TrackingControls(
@@ -60,7 +60,7 @@ fun TrackingControls(
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 24.dp)
     ) {
-        // Massive Prominent Center Action Pill Button
+        // Massive Prominent Center Action Pill Button (Vibrant Yellow #F8E602 when idle, Soft Peach #FFDCB9 when active)
         Button(
             onClick = onToggleTracking,
             modifier = Modifier
@@ -70,7 +70,7 @@ fun TrackingControls(
             shape = RoundedCornerShape(32.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = buttonColor,
-                contentColor = Color.White
+                contentColor = DeepForestText
             ),
             elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 8.dp,
@@ -84,6 +84,7 @@ fun TrackingControls(
                 Icon(
                     imageVector = if (isTracking) Icons.Rounded.Stop else Icons.Rounded.PlayArrow,
                     contentDescription = if (isTracking) stringResource(R.string.stop_hike) else stringResource(R.string.start_hike),
+                    tint = DeepForestText,
                     modifier = Modifier.size(32.dp)
                 )
 
@@ -92,6 +93,7 @@ fun TrackingControls(
                 Text(
                     text = if (isTracking) stringResource(R.string.stop_hike) else stringResource(R.string.start_hike),
                     style = MaterialTheme.typography.titleLarge,
+                    color = DeepForestText,
                     fontWeight = FontWeight.Black,
                     fontSize = 20.sp,
                     letterSpacing = 1.2.sp
@@ -99,20 +101,21 @@ fun TrackingControls(
             }
         }
 
-        // Recenter My Location FAB on the right
+        // Recenter My Location FAB on the right in Soft Mint (#C2ECD4)
         FloatingActionButton(
             onClick = onRecenterMap,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .size(52.dp),
             shape = CircleShape,
-            containerColor = SurfaceGlassDark,
-            contentColor = Color.White,
+            containerColor = SoftMintContainer,
+            contentColor = DeepForestText,
             elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp)
         ) {
             Icon(
                 imageVector = Icons.Rounded.MyLocation,
                 contentDescription = "Recenter Map",
+                tint = DeepForestText,
                 modifier = Modifier.size(24.dp)
             )
         }

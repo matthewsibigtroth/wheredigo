@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOn
@@ -33,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,10 +42,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.wheredigo.hikingtracker.R
-import com.wheredigo.hikingtracker.ui.theme.EmeraldStartButton
+import com.wheredigo.hikingtracker.ui.theme.DeepForestText
+import com.wheredigo.hikingtracker.ui.theme.MutedForestText
+import com.wheredigo.hikingtracker.ui.theme.PastelSpringGreen
+import com.wheredigo.hikingtracker.ui.theme.SoftSageBackground
 import com.wheredigo.hikingtracker.ui.theme.SurfaceGlassDark
-import com.wheredigo.hikingtracker.ui.theme.TextPrimaryLight
-import com.wheredigo.hikingtracker.ui.theme.TextSecondaryLight
+import com.wheredigo.hikingtracker.ui.theme.VibrantYellowButton
 
 /**
  * Checks and requests runtime permissions (Fine/Coarse Location, Notifications on Android 13+).
@@ -99,7 +101,7 @@ fun PermissionHandler(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.85f))
+                .background(SoftSageBackground)
                 .padding(24.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -116,14 +118,14 @@ fun PermissionHandler(
                     Box(
                         modifier = Modifier
                             .size(64.dp)
-                            .background(EmeraldStartButton.copy(alpha = 0.2f), RoundedCornerShape(20.dp)),
+                            .background(PastelSpringGreen, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.LocationOn,
                             contentDescription = null,
-                            tint = EmeraldStartButton,
-                            modifier = Modifier.size(36.dp)
+                            tint = DeepForestText,
+                            modifier = Modifier.size(34.dp)
                         )
                     }
 
@@ -133,7 +135,7 @@ fun PermissionHandler(
                         text = stringResource(R.string.permission_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimaryLight,
+                        color = DeepForestText,
                         textAlign = TextAlign.Center
                     )
 
@@ -142,7 +144,7 @@ fun PermissionHandler(
                     Text(
                         text = stringResource(R.string.permission_description),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = TextSecondaryLight,
+                        color = MutedForestText,
                         textAlign = TextAlign.Center,
                         lineHeight = 22.sp
                     )
@@ -155,13 +157,16 @@ fun PermissionHandler(
                             .fillMaxWidth()
                             .height(54.dp),
                         shape = RoundedCornerShape(27.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldStartButton)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = VibrantYellowButton,
+                            contentColor = DeepForestText
+                        )
                     ) {
                         Text(
                             text = stringResource(R.string.grant_permissions),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = DeepForestText
                         )
                     }
                 }

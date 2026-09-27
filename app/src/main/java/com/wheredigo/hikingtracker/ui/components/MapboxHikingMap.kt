@@ -117,10 +117,10 @@ fun MapboxHikingMap(
                 annotations = listOf(
                     PolylineAnnotationOptions()
                         .withPoints(pathPoints)
-                        .withLineColor("#00E676")
+                        .withLineColor("#AAF5A3")
                         .withLineWidth(6.0)
                         .withLineBorderWidth(2.0)
-                        .withLineBorderColor("#004D40")
+                        .withLineBorderColor("#171D16")
                 )
             )
         }

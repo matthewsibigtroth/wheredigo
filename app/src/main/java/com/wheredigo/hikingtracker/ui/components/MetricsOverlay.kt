@@ -112,8 +112,7 @@ fun MetricsOverlay(
                         style = MaterialTheme.typography.labelSmall,
                         color = DeepForestText,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.1.sp,
-                        modifier = Modifier.clickable { isExpanded = !isExpanded }
+                        letterSpacing = 1.1.sp
                     )
 
                     Row(
@@ -289,22 +288,6 @@ fun MetricsOverlay(
                         }
                     }
                 }
-            }
-
-            // Subtle bottom pill handle affordance to toggle show/hide
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { isExpanded = !isExpanded }
-                    .padding(top = 8.dp, bottom = 2.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(36.dp)
-                        .height(4.dp)
-                        .background(MutedForestText.copy(alpha = 0.35f), RoundedCornerShape(50))
-                )
             }
         }
     }

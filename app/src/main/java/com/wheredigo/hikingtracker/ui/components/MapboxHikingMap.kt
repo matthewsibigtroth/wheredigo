@@ -32,6 +32,12 @@ import com.mapbox.maps.extension.style.terrain.generated.setTerrain
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.wheredigo.hikingtracker.ui.theme.CrispWhiteSurface
+import com.wheredigo.hikingtracker.ui.theme.DeepForestText
+import com.wheredigo.hikingtracker.ui.theme.MutedForestText
+import com.wheredigo.hikingtracker.ui.theme.PastelSpringGreen
+import com.wheredigo.hikingtracker.ui.theme.SoftSageBackground
+import com.wheredigo.hikingtracker.ui.theme.VibrantYellowButton
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -113,17 +119,17 @@ fun MapboxHikingMap(
                     val ringCenterRadius = (innerRadius + outerRadius) / 2f
                     val ringThickness = outerRadius - innerRadius
 
-                    // Dark bezel ring around the camera cutout
+                    // DeepForestText bezel ring around the camera cutout
                     drawCircle(
-                        color = Color(0xD9171D16),
+                        color = DeepForestText.copy(alpha = 0.92f),
                         radius = ringCenterRadius,
                         center = center,
                         style = Stroke(width = ringThickness)
                     )
 
-                    // Crisp outer border
+                    // PastelSpringGreen outer border
                     drawCircle(
-                        color = Color(0x80FFFFFF),
+                        color = PastelSpringGreen,
                         radius = outerRadius - 0.85.dp.toPx(),
                         center = center,
                         style = Stroke(width = 1.2.dp.toPx())
@@ -137,7 +143,7 @@ fun MapboxHikingMap(
                         val tickStart = if (isCardinal) innerRadius + 1.8.dp.toPx() else innerRadius + 3.5.dp.toPx()
                         val tickEnd = outerRadius - 1.8.dp.toPx()
                         drawLine(
-                            color = if (isCardinal) Color.White else Color(0x99FFFFFF),
+                            color = if (isCardinal) SoftSageBackground else MutedForestText,
                             start = Offset(
                                 center.x + (tickStart * cos(rad)).toFloat(),
                                 center.y + (tickStart * sin(rad)).toFloat()
@@ -151,7 +157,7 @@ fun MapboxHikingMap(
                         )
                     }
 
-                    // Bold Red North Needle (top of ring, outside the camera hole)
+                    // VibrantYellowButton North Needle (top of ring, outside the camera hole)
                     val needleHalfWidth = 4.8.dp.toPx()
                     val northPath = Path().apply {
                         moveTo(center.x, center.y - outerRadius + 0.75.dp.toPx()) // Tip at outer top edge
@@ -159,16 +165,16 @@ fun MapboxHikingMap(
                         lineTo(center.x + needleHalfWidth, center.y - innerRadius - 0.75.dp.toPx())
                         close()
                     }
-                    drawPath(path = northPath, color = Color(0xFFFF3B30))
+                    drawPath(path = northPath, color = VibrantYellowButton)
 
-                    // Crisp White South Needle (bottom of ring, outside the camera hole)
+                    // CrispWhiteSurface South Needle (bottom of ring, outside the camera hole)
                     val southPath = Path().apply {
                         moveTo(center.x, center.y + outerRadius - 0.75.dp.toPx()) // Tip at outer bottom edge
                         lineTo(center.x - needleHalfWidth, center.y + innerRadius + 0.75.dp.toPx())
                         lineTo(center.x + needleHalfWidth, center.y + innerRadius + 0.75.dp.toPx())
                         close()
                     }
-                    drawPath(path = southPath, color = Color.White)
+                    drawPath(path = southPath, color = CrispWhiteSurface)
                 }
             }
         },
@@ -184,8 +190,10 @@ fun MapboxHikingMap(
                 pulsingEnabled = true
             }
 
-            // Apply 3D Terrain when style loads
+            // Apply 3D Terrain and UI Palette when style loads
             mapView.mapboxMap.getStyle { style ->
+                applyUiPaletteToMapStyle(style)
+
                 if (!mapView.mapboxMap.styleSourceExists("mapbox-dem")) {
                     val demSource = rasterDemSource("mapbox-dem") {
                         url("mapbox://mapbox.mapbox-terrain-dem-v1")
@@ -206,12 +214,141 @@ fun MapboxHikingMap(
                 annotations = listOf(
                     PolylineAnnotationOptions()
                         .withPoints(pathPoints)
-                        .withLineColor("#AAF5A3")
+                        .withLineColor("#F8E602")
                         .withLineWidth(6.0)
                         .withLineBorderWidth(2.0)
                         .withLineBorderColor("#171D16")
                 )
             )
+        }
+    }
+}
+
+/**
+ * Restyles Mapbox Outdoors layers to match the app's UI palette from Color.kt:
+ * - SoftSageBackground (#ECF2E6): Base land & label halos
+ * - PastelSpringGreen (#AAF5A3): Parks, forests, woods & vegetation
+ * - SoftMintContainer (#C2ECD4): Lakes, rivers, oceans & waterways
+ * - SoftPeachAccent (#FFDCB9): Roads, highways & buildings
+ * - MutedForestText (#4A5848): Contours, hillshade shadows & borders
+ * - DeepForestText (#171D16): Trails, paths & typography labels
+ * - CrispWhiteSurface (#FFFFFF): Hillshade highlights
+ */
+private fun applyUiPaletteToMapStyle(style: Style) {
+    val softSageBackground = "#ECF2E6"
+    val pastelSpringGreen = "#AAF5A3"
+    val softMintContainer = "#C2ECD4"
+    val softPeachAccent = "#FFDCB9"
+    val vibrantYellow = "#F8E602"
+    val crispWhite = "#FFFFFF"
+    val deepForestText = "#171D16"
+    val mutedForestText = "#4A5848"
+
+    for (layer in style.styleLayers) {
+        val id = layer.id.lowercase()
+        when (layer.type) {
+            "background" -> {
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "background-color",
+                    com.mapbox.bindgen.Value.valueOf(softSageBackground)
+                )
+            }
+            "fill" -> {
+                val fillColor = when {
+                    id.contains("water") || id.contains("wetland") || id.contains("glacier") -> softMintContainer
+                    id.contains("park") || id.contains("national") || id.contains("wood") ||
+                        id.contains("forest") || id.contains("landcover") || id.contains("landuse") ||
+                        id.contains("grass") || id.contains("scrub") || id.contains("vegetation") -> pastelSpringGreen
+                    id.contains("building") -> softPeachAccent
+                    else -> softSageBackground
+                }
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "fill-color",
+                    com.mapbox.bindgen.Value.valueOf(fillColor)
+                )
+                if (id.contains("building")) {
+                    style.setStyleLayerProperty(
+                        layer.id,
+                        "fill-outline-color",
+                        com.mapbox.bindgen.Value.valueOf(mutedForestText)
+                    )
+                }
+            }
+            "hillshade" -> {
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "hillshade-shadow-color",
+                    com.mapbox.bindgen.Value.valueOf(mutedForestText)
+                )
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "hillshade-highlight-color",
+                    com.mapbox.bindgen.Value.valueOf(crispWhite)
+                )
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "hillshade-accent-color",
+                    com.mapbox.bindgen.Value.valueOf(pastelSpringGreen)
+                )
+            }
+            "line" -> {
+                val lineColor = when {
+                    id.contains("water") || id.contains("river") || id.contains("stream") ||
+                        id.contains("canal") || id.contains("drain") -> softMintContainer
+                    id.contains("contour") -> mutedForestText
+                    id.contains("path") || id.contains("trail") || id.contains("track") ||
+                        id.contains("pedestrian") || id.contains("footway") || id.contains("steps") ||
+                        id.contains("cycleway") -> deepForestText
+                    id.contains("case") || id.contains("casing") -> mutedForestText
+                    id.contains("road") || id.contains("street") || id.contains("highway") ||
+                        id.contains("motorway") || id.contains("trunk") || id.contains("primary") ||
+                        id.contains("secondary") || id.contains("tertiary") || id.contains("bridge") ||
+                        id.contains("tunnel") -> softPeachAccent
+                    id.contains("admin") || id.contains("boundary") || id.contains("border") -> mutedForestText
+                    else -> softMintContainer
+                }
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "line-color",
+                    com.mapbox.bindgen.Value.valueOf(lineColor)
+                )
+            }
+            "symbol" -> {
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "text-color",
+                    com.mapbox.bindgen.Value.valueOf(deepForestText)
+                )
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "text-halo-color",
+                    com.mapbox.bindgen.Value.valueOf(softSageBackground)
+                )
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "icon-color",
+                    com.mapbox.bindgen.Value.valueOf(deepForestText)
+                )
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "icon-halo-color",
+                    com.mapbox.bindgen.Value.valueOf(softSageBackground)
+                )
+            }
+            "sky" -> {
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "sky-atmosphere-color",
+                    com.mapbox.bindgen.Value.valueOf(softSageBackground)
+                )
+                style.setStyleLayerProperty(
+                    layer.id,
+                    "sky-atmosphere-sun-color",
+                    com.mapbox.bindgen.Value.valueOf(vibrantYellow)
+                )
+            }
         }
     }
 }

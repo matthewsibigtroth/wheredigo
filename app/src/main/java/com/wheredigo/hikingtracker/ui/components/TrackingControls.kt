@@ -67,6 +67,8 @@ fun TrackingControls(
     isTracking: Boolean,
     onToggleTracking: () -> Unit,
     modifier: Modifier = Modifier,
+    isHistoryMode: Boolean = false,
+    onHistoryModeChange: (Boolean) -> Unit = {},
     savedHikes: List<SavedHike> = emptyList(),
     onSelectSavedHike: (SavedHike) -> Unit = {},
     onSecondaryAction: () -> Unit = {},
@@ -76,12 +78,11 @@ fun TrackingControls(
     val density = LocalDensity.current
     var pillWidthPx by remember { mutableIntStateOf(0) }
     var startContentWidthPx by remember { mutableIntStateOf(0) }
-    var isHistoryMode by remember { mutableStateOf(false) }
     var selectedHikeId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(isTracking) {
-        if (isTracking) {
-            isHistoryMode = false
+        if (isTracking && isHistoryMode) {
+            onHistoryModeChange(false)
         }
     }
 
@@ -164,7 +165,7 @@ fun TrackingControls(
                             .clickable(
                                 enabled = !isTracking,
                                 onClick = {
-                                    isHistoryMode = !isHistoryMode
+                                    onHistoryModeChange(!isHistoryMode)
                                     onSecondaryAction()
                                 }
                             ),

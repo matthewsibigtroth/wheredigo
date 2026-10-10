@@ -89,8 +89,6 @@ fun MapboxHikingMap(
     }
 
     val view = LocalView.current
-    val insets = ViewCompat.getRootWindowInsets(view)
-    val cutoutRect = insets?.displayCutout?.boundingRects?.firstOrNull()
 
     MapboxMap(
         modifier = modifier.fillMaxSize(),
@@ -103,8 +101,7 @@ fun MapboxHikingMap(
                 modifier = Modifier
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
-                        val cutoutCenterY = cutoutRect?.exactCenterY()
-                            ?: (24f * view.resources.displayMetrics.density)
+                        val cutoutCenterY = getCameraCutoutCenterYPx(view)
                         val offsetY = (cutoutCenterY - placeable.height / 2f).roundToInt()
                         layout(placeable.width, placeable.height) {
                             placeable.placeRelative(0, offsetY)
@@ -115,12 +112,9 @@ fun MapboxHikingMap(
                 Canvas(modifier = Modifier.size(50.dp)) {
                     val center = Offset(size.width / 2f, size.height / 2f)
                     val outerRadius = size.minDimension / 2f
-                    val cutoutRadiusPx = cutoutRect?.let {
-                        maxOf(it.width(), it.height()) / 2f
-                    } ?: 13.dp.toPx()
 
                     // Ring band between camera cutout edge and outer compass edge
-                    val innerRadius = cutoutRadiusPx.coerceAtMost(outerRadius * 0.56f)
+                    val innerRadius = getCameraCutoutInnerRadiusPx(view, outerRadius)
                     val ringCenterRadius = (innerRadius + outerRadius) / 2f
                     val ringThickness = outerRadius - innerRadius
 
@@ -369,6 +363,65 @@ private fun applyUiPaletteToMapStyle(style: Style) {
                     com.mapbox.bindgen.Value.valueOf(vibrantYellow)
                 )
             }
+        }
+    }
+}
+
+/**
+ * Returns the vertical center (in pixels) of the front camera punch-hole
+ * for Pixel 9 Pro ("caiman") and Pixel 7a ("lynx").
+ */
+fun getCameraCutoutCenterYPx(view: android.view.View): Float {
+    val screenWidthPx = view.resources.displayMetrics.widthPixels.toFloat()
+    val model = android.os.Build.MODEL.orEmpty()
+    val device = android.os.Build.DEVICE.orEmpty()
+    val cutoutRect = ViewCompat.getRootWindowInsets(view)
+        ?.displayCutout
+        ?.boundingRects
+        ?.firstOrNull()
+
+    return when {
+        // Pixel 7a (lynx): 1080x2400 display, physical camera hole y=[34..94], center Y = 64px
+        model.contains("Pixel 7a", ignoreCase = true) ||
+            device.equals("lynx", ignoreCase = true) -> {
+            if (cutoutRect != null && cutoutRect.top > 0) {
+                cutoutRect.exactCenterY()
+            } else {
+                screenWidthPx * (64f / 1080f)
+            }
+        }
+
+        // Pixel 9 Pro (caiman): 1280x2856 native (960x2142 default), camera hole center Y = 102px (76.5px at 960w)
+        model.contains("Pixel 9 Pro", ignoreCase = true) ||
+            device.equals("caiman", ignoreCase = true) -> {
+            cutoutRect?.exactCenterY() ?: (screenWidthPx * (102f / 1280f))
+        }
+
+        else -> {
+            cutoutRect?.exactCenterY() ?: (24f * view.resources.displayMetrics.density)
+        }
+    }
+}
+
+/**
+ * Returns the inner cutout radius (in pixels) for the compass bezel ring
+ * for Pixel 9 Pro ("caiman") and Pixel 7a ("lynx").
+ */
+fun getCameraCutoutInnerRadiusPx(view: android.view.View, outerRadiusPx: Float): Float {
+    val screenWidthPx = view.resources.displayMetrics.widthPixels.toFloat()
+    val model = android.os.Build.MODEL.orEmpty()
+    val device = android.os.Build.DEVICE.orEmpty()
+
+    return when {
+        // Pixel 7a (lynx): 61px hole diameter at 1080px width (radius ~30.5px)
+        model.contains("Pixel 7a", ignoreCase = true) ||
+            device.equals("lynx", ignoreCase = true) -> {
+            (screenWidthPx * (31f / 1080f)).coerceAtMost(outerRadiusPx * 0.56f)
+        }
+
+        // Pixel 9 Pro (caiman): ~98px hole diameter at 1280px width
+        else -> {
+            outerRadiusPx * 0.56f
         }
     }
 }

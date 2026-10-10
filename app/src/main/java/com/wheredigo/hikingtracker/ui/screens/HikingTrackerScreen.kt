@@ -39,6 +39,7 @@ fun HikingTrackerScreen(
     val density = LocalDensity.current
     val view = LocalView.current
     val uiState by viewModel.uiState.collectAsState()
+    val savedHikes by viewModel.savedHikes.collectAsState()
     var showWeightDialog by remember { mutableStateOf(false) }
     var metricsCardHeightPx by remember { mutableIntStateOf(0) }
     var miniCardHeightPx by remember { mutableIntStateOf(0) }
@@ -117,6 +118,10 @@ fun HikingTrackerScreen(
                 isTracking = uiState.isTracking,
                 onToggleTracking = {
                     viewModel.toggleTracking(context)
+                },
+                savedHikes = savedHikes,
+                onSelectSavedHike = { hike ->
+                    viewModel.loadSavedHike(hike)
                 },
                 expandedHeight = matchedExpandedHeight,
                 collapsedHeight = matchedMiniCardHeight,

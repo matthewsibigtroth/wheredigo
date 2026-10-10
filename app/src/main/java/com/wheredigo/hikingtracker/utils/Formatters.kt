@@ -1,11 +1,21 @@
 package com.wheredigo.hikingtracker.utils
 
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 /**
  * Utility functions for clean, user-friendly formatting of hiking metrics.
  */
 object Formatters {
+
+    /**
+     * Formats a unix epoch timestamp in milliseconds into a readable date and time (e.g. "Oct 10, 12:15 PM").
+     */
+    fun formatTimestamp(timestampMillis: Long): String {
+        val formatter = SimpleDateFormat("MMM d, h:mm a", Locale.US)
+        return formatter.format(Date(timestampMillis))
+    }
 
     /**
      * Formats duration in seconds to standard HH:MM:SS format.

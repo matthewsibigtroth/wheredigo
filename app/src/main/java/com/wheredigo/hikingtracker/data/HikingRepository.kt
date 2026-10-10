@@ -65,9 +65,9 @@ object HikingRepository {
         _sessionState.update { current ->
             HikingSessionState(
                 isTracking = true,
-                pathPoints = emptyList(),
+                pathPoints = listOfNotNull(current.latestPoint),
                 metrics = HikingMetrics(),
-                latestPoint = null,
+                latestPoint = current.latestPoint,
                 userWeightLbs = initialWeightLbs ?: current.userWeightLbs
             )
         }

@@ -67,12 +67,17 @@ fun MapboxHikingMap(
         }
     }
 
-    // Smoothly follow latest location
-    LaunchedEffect(latestPoint, isTracking) {
-        if (latestPoint != null) {
+    // Smoothly follow latest location or center on loaded hike path
+    LaunchedEffect(latestPoint, pathPoints, isTracking) {
+        val targetPoint = if (!isTracking && pathPoints.isNotEmpty()) {
+            pathPoints[pathPoints.size / 2]
+        } else {
+            latestPoint
+        }
+        if (targetPoint != null) {
             mapViewportState.easeTo(
                 cameraOptions = cameraOptions {
-                    center(latestPoint)
+                    center(targetPoint)
                     pitch(60.0)
                     if (isTracking) zoom(16.5)
                 },
@@ -218,12 +223,17 @@ fun MapboxHikingMap(
             }
         }
 
-        // Draw continuous Polyline of the tracked hike path
-        if (pathPoints.size >= 2) {
+        // Draw continuous Polyline of the tracked or loaded hike path
+        if (pathPoints.isNotEmpty()) {
+            val polylinePoints = if (pathPoints.size == 1) {
+                listOf(pathPoints[0], pathPoints[0])
+            } else {
+                pathPoints
+            }
             PolylineAnnotationGroup(
                 annotations = listOf(
                     PolylineAnnotationOptions()
-                        .withPoints(pathPoints)
+                        .withPoints(polylinePoints)
                         .withLineColor("#F8E602")
                         .withLineWidth(6.0)
                         .withLineBorderWidth(2.0)

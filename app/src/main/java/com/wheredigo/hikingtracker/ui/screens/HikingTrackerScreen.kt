@@ -82,7 +82,7 @@ fun HikingTrackerScreen(
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding())
+                    .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding() + 12.dp)
             )
 
             // Weight Settings Dialog

@@ -178,6 +178,16 @@ fun MapboxHikingMap(
                 }
             }
         },
+        scaleBar = {
+            val bottomOffset = 10.dp - with(androidx.compose.ui.platform.LocalDensity.current) { 5.toDp() }
+            ScaleBar(
+                alignment = Alignment.BottomEnd,
+                contentPadding = PaddingValues(end = 16.dp, bottom = bottomOffset.coerceAtLeast(0.dp)),
+                textColor = DeepForestText,
+                primaryColor = DeepForestText,
+                secondaryColor = SoftSageBackground
+            )
+        },
         style = {
             MapStyle(style = Style.OUTDOORS)
         }

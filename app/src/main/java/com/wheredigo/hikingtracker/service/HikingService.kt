@@ -121,7 +121,7 @@ class HikingService : Service() {
     }
 
     private fun stopTracking() {
-        HikingRepository.stopSession()
+        HikingRepository.stopSession(applicationContext)
         stopLocationUpdates()
         timerJob?.cancel()
         releaseWakeLock()

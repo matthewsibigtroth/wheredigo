@@ -38,3 +38,13 @@ data class HikingSessionState(
     val latestPoint: Point? = null,
     val userWeightLbs: Double = com.wheredigo.hikingtracker.utils.CalorieCalculator.DEFAULT_WEIGHT_LBS
 )
+
+/**
+ * A completed hike saved locally on the device so it can be loaded and viewed later.
+ */
+data class SavedHike(
+    val id: String,
+    val timestampMillis: Long,
+    val metrics: HikingMetrics,
+    val pathPoints: List<Point>
+)

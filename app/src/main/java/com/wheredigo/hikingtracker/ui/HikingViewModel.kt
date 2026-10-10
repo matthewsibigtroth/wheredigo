@@ -7,6 +7,7 @@ import com.mapbox.geojson.Point
 import com.wheredigo.hikingtracker.data.HikingMetrics
 import com.wheredigo.hikingtracker.data.HikingRepository
 import com.wheredigo.hikingtracker.data.HikingSessionState
+import com.wheredigo.hikingtracker.data.SavedHike
 import com.wheredigo.hikingtracker.service.HikingService
 import com.wheredigo.hikingtracker.utils.Formatters
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,6 +37,8 @@ data class HikingUiState(
  */
 class HikingViewModel : ViewModel() {
 
+    val savedHikes: StateFlow<List<SavedHike>> = HikingRepository.savedHikes
+
     val uiState: StateFlow<HikingUiState> = HikingRepository.sessionState
         .map { session: HikingSessionState ->
             val m = session.metrics
@@ -60,11 +63,19 @@ class HikingViewModel : ViewModel() {
         )
 
     /**
-     * Initializes user preferences like weight on startup.
+     * Initializes user preferences like weight and loads saved hikes on startup.
      */
     fun initializePreferences(context: Context) {
         val savedWeight = com.wheredigo.hikingtracker.data.HikingPreferences.getUserWeightLbs(context)
         HikingRepository.setUserWeightLbs(savedWeight)
+        HikingRepository.loadSavedHikes(context)
+    }
+
+    /**
+     * Loads a previously saved hike's route and metrics into the active map and overlay view.
+     */
+    fun loadSavedHike(hike: SavedHike) {
+        HikingRepository.loadSavedHike(hike)
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.wheredigo.hikingtracker.data
 
+import android.content.Context
 import android.location.Location
 import com.mapbox.geojson.Point
 import com.wheredigo.hikingtracker.utils.CalorieCalculator
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.UUID
 
 /**
  * Singleton repository managing active hiking session state.
@@ -18,8 +20,32 @@ object HikingRepository {
     private val _sessionState = MutableStateFlow(HikingSessionState())
     val sessionState: StateFlow<HikingSessionState> = _sessionState.asStateFlow()
 
+    private val _savedHikes = MutableStateFlow<List<SavedHike>>(emptyList())
+    val savedHikes: StateFlow<List<SavedHike>> = _savedHikes.asStateFlow()
+
     private var previousLocation: Location? = null
     private var lastRecordedAltitude: Double? = null
+
+    /**
+     * Loads the list of saved hikes from local storage into memory.
+     */
+    fun loadSavedHikes(context: Context) {
+        _savedHikes.value = HikingPreferences.getSavedHikes(context)
+    }
+
+    /**
+     * Loads a previously saved hike's path and metrics into the session state when not actively tracking.
+     */
+    fun loadSavedHike(hike: SavedHike) {
+        _sessionState.update { current ->
+            if (current.isTracking) return@update current
+            current.copy(
+                pathPoints = hike.pathPoints,
+                metrics = hike.metrics,
+                latestPoint = hike.pathPoints.lastOrNull() ?: current.latestPoint
+            )
+        }
+    }
 
     /**
      * Updates the user's weight in pounds and adjusts live calorie calculation weight.
@@ -48,14 +74,31 @@ object HikingRepository {
     }
 
     /**
-     * Stops the active hiking tracking session.
+     * Stops the active hiking tracking session and persists the completed hike to app storage.
      */
-    fun stopSession() {
+    fun stopSession(context: Context? = null) {
+        val finishedSession = _sessionState.value
         _sessionState.update { current ->
             current.copy(isTracking = false)
         }
         previousLocation = null
         lastRecordedAltitude = null
+
+        if (finishedSession.isTracking &&
+            (finishedSession.metrics.durationSeconds > 0L || finishedSession.pathPoints.isNotEmpty())
+        ) {
+            val savedHike = SavedHike(
+                id = UUID.randomUUID().toString(),
+                timestampMillis = System.currentTimeMillis(),
+                metrics = finishedSession.metrics,
+                pathPoints = finishedSession.pathPoints
+            )
+            if (context != null) {
+                _savedHikes.value = HikingPreferences.saveHike(context, savedHike)
+            } else {
+                _savedHikes.update { listOf(savedHike) + it }
+            }
+        }
     }
 
     /**

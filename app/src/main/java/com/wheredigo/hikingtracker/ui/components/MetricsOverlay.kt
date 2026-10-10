@@ -72,7 +72,8 @@ import java.util.Locale
 fun MetricsOverlay(
     uiState: HikingUiState,
     onOpenWeightSettings: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onMiniCardHeightMeasured: (Int) -> Unit = {}
 ) {
     val density = LocalDensity.current
     var maxCardHeightPx by remember { mutableIntStateOf(0) }
@@ -94,11 +95,11 @@ fun MetricsOverlay(
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Top Pastel Green Header Banner (#AAF5A3)
+            // Top Header Banner matching the Metrics Card background
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                color = PastelSpringGreen
+                color = androidx.compose.ui.graphics.Color.Transparent
             ) {
                 Row(
                     modifier = Modifier
@@ -108,7 +109,7 @@ fun MetricsOverlay(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "WHERED I GO • HIKE METRICS",
+                        text = "HIKE METRICS",
                         style = MaterialTheme.typography.labelSmall,
                         color = DeepForestText,
                         fontWeight = FontWeight.Bold,
@@ -200,6 +201,13 @@ fun MetricsOverlay(
                 ) {
                     Spacer(modifier = Modifier.height(10.dp))
 
+                    val updateMiniCardHeight: (Int) -> Unit = { h ->
+                        if (h > maxCardHeightPx) {
+                            maxCardHeightPx = h
+                            onMiniCardHeightMeasured(h)
+                        }
+                    }
+
                     // Row 1: Time Elapsed & Distance Covered
                     Row(
                         modifier = Modifier
@@ -211,7 +219,7 @@ fun MetricsOverlay(
                             value = uiState.formattedTime,
                             icon = Icons.Rounded.Schedule,
                             minHeight = uniformCardMinHeight,
-                            onHeightMeasured = { h -> if (h > maxCardHeightPx) maxCardHeightPx = h },
+                            onHeightMeasured = updateMiniCardHeight,
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
@@ -221,7 +229,7 @@ fun MetricsOverlay(
                             value = uiState.formattedDistance,
                             icon = Icons.Rounded.DirectionsWalk,
                             minHeight = uniformCardMinHeight,
-                            onHeightMeasured = { h -> if (h > maxCardHeightPx) maxCardHeightPx = h },
+                            onHeightMeasured = updateMiniCardHeight,
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
@@ -241,7 +249,7 @@ fun MetricsOverlay(
                             value = uiState.formattedAltitude,
                             icon = Icons.Rounded.Terrain,
                             minHeight = uniformCardMinHeight,
-                            onHeightMeasured = { h -> if (h > maxCardHeightPx) maxCardHeightPx = h },
+                            onHeightMeasured = updateMiniCardHeight,
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
@@ -251,7 +259,7 @@ fun MetricsOverlay(
                             value = uiState.formattedCalories,
                             icon = Icons.Rounded.LocalFireDepartment,
                             minHeight = uniformCardMinHeight,
-                            onHeightMeasured = { h -> if (h > maxCardHeightPx) maxCardHeightPx = h },
+                            onHeightMeasured = updateMiniCardHeight,
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()

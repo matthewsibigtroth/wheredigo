@@ -2,6 +2,7 @@ package com.wheredigo.hikingtracker.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wheredigo.hikingtracker.R
@@ -35,13 +37,16 @@ import com.wheredigo.hikingtracker.ui.theme.DeepForestText
 import com.wheredigo.hikingtracker.ui.theme.EmeraldStartButton
 
 /**
- * Bottom controls featuring the prominent Start/Stop Pill Button (#F8E602 / #FFDCB9).
+ * Bottom controls featuring the prominent Start/Stop Action Button (#F8E602 / #FFDCB9),
+ * sized to match the top MetricsOverlay card when idle and collapsing to a mini-card height when active.
  */
 @Composable
 fun TrackingControls(
     isTracking: Boolean,
     onToggleTracking: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    expandedHeight: Dp = 224.dp,
+    collapsedHeight: Dp = 62.dp
 ) {
     val buttonColor by animateColorAsState(
         targetValue = if (isTracking) CrimsonStopButton else EmeraldStartButton,
@@ -49,19 +54,25 @@ fun TrackingControls(
         label = "ButtonColorAnimation"
     )
 
+    val animatedHeight by animateDpAsState(
+        targetValue = if (isTracking) collapsedHeight else expandedHeight,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+        label = "ButtonHeightAnimation"
+    )
+
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
-        // Massive Prominent Center Action Pill Button (Vibrant Yellow #F8E602 when idle, Soft Peach #FFDCB9 when active)
+        // Massive Prominent Center Action Pill Button matching the Metrics Card dimensions
         Button(
             onClick = onToggleTracking,
             modifier = Modifier
                 .align(Alignment.Center)
-                .height(64.dp)
-                .fillMaxWidth(0.72f),
-            shape = RoundedCornerShape(32.dp),
+                .height(animatedHeight)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(percent = 50),
             colors = ButtonDefaults.buttonColors(
                 containerColor = buttonColor,
                 contentColor = DeepForestText

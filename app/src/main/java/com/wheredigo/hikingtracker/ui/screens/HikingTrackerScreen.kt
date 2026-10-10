@@ -1,23 +1,24 @@
 package com.wheredigo.hikingtracker.ui.screens
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
 import com.wheredigo.hikingtracker.ui.HikingViewModel
 import com.wheredigo.hikingtracker.ui.components.MapboxHikingMap
 import com.wheredigo.hikingtracker.ui.components.MetricsOverlay
@@ -35,8 +36,25 @@ fun HikingTrackerScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current
+    val view = LocalView.current
     val uiState by viewModel.uiState.collectAsState()
     var showWeightDialog by remember { mutableStateOf(false) }
+    var metricsCardHeightPx by remember { mutableIntStateOf(0) }
+    var miniCardHeightPx by remember { mutableIntStateOf(0) }
+
+    val insets = ViewCompat.getRootWindowInsets(view)
+    val cutoutRect = insets?.displayCutout?.boundingRects?.firstOrNull()
+    val cutoutCenterYPx = cutoutRect?.exactCenterY()
+        ?: with(density) { 24.dp.toPx() }
+    val compassRadiusPx = with(density) { 25.dp.toPx() } // 50.dp compass diameter / 2
+
+    // Distance from the top of the compass to the top of the screen
+    val compassTopGapPx = (cutoutCenterYPx - compassRadiusPx).coerceAtLeast(0f)
+    val compassBottomYPx = cutoutCenterYPx + compassRadiusPx
+
+    // Distance from the top of the screen to the top of the metrics card
+    val metricsTopPaddingDp = with(density) { (compassBottomYPx + compassTopGapPx).toDp() }
 
     LaunchedEffect(Unit) {
         viewModel.initializePreferences(context)
@@ -59,30 +77,52 @@ fun HikingTrackerScreen(
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Top Overlay: Live Metrics Card (Status bar safe)
+            // Top Overlay: Live Metrics Card positioned compassTopGap below the bottom of the compass
             MetricsOverlay(
                 uiState = uiState,
                 onOpenWeightSettings = {
                     showWeightDialog = true
                 },
+                onMiniCardHeightMeasured = { heightPx ->
+                    miniCardHeightPx = heightPx
+                },
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(
-                        top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 12.dp,
+                        top = metricsTopPaddingDp,
                         start = 16.dp,
                         end = 16.dp
                     )
+                    .onSizeChanged { size ->
+                        if (!uiState.isTracking && size.height > metricsCardHeightPx) {
+                            metricsCardHeightPx = size.height
+                        }
+                    }
             )
 
-            // Bottom Controls: Start/Stop Pill Action Button
+            val matchedExpandedHeight = if (metricsCardHeightPx > 0) {
+                with(density) { metricsCardHeightPx.toDp() }
+            } else {
+                224.dp
+            }
+
+            val matchedMiniCardHeight = if (miniCardHeightPx > 0) {
+                with(density) { miniCardHeightPx.toDp() }
+            } else {
+                62.dp
+            }
+
+            // Bottom Controls: Start/Stop Action Button with bottom padding matching metricsTopPaddingDp
             TrackingControls(
                 isTracking = uiState.isTracking,
                 onToggleTracking = {
                     viewModel.toggleTracking(context)
                 },
+                expandedHeight = matchedExpandedHeight,
+                collapsedHeight = matchedMiniCardHeight,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding() + 12.dp)
+                    .padding(bottom = metricsTopPaddingDp)
             )
 
             // Weight Settings Dialog

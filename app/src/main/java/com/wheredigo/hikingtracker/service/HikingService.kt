@@ -51,7 +51,7 @@ class HikingService : Service() {
         const val ACTION_START = "com.wheredigo.hikingtracker.ACTION_START"
         const val ACTION_STOP = "com.wheredigo.hikingtracker.ACTION_STOP"
 
-        const val CHANNEL_ID = "hiking_tracking_channel"
+        const val CHANNEL_ID = "hiking_tracking_channel_v2"
         const val NOTIFICATION_ID = 1001
 
         /**
@@ -200,31 +200,16 @@ class HikingService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Action intent to Stop Hike directly from notification
-        val stopIntent = Intent(this, HikingService::class.java).apply {
-            action = ACTION_STOP
-        }
-        val pendingStopIntent = PendingIntent.getService(
-            this,
-            1,
-            stopIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Hike in Progress: $timeString")
+            .setContentTitle(timeString)
             .setContentText(contentText)
             .setSmallIcon(R.drawable.ic_hiking_notification)
             .setContentIntent(pendingContentIntent)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setCategory(NotificationCompat.CATEGORY_WORKOUT)
-            .addAction(
-                android.R.drawable.ic_media_pause,
-                getString(R.string.notification_action_stop),
-                pendingStopIntent
-            )
             .build()
     }
 
@@ -233,10 +218,11 @@ class HikingService : Service() {
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 getString(R.string.notification_channel_name),
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
                 description = getString(R.string.notification_channel_description)
                 setShowBadge(false)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
             notificationManager.createNotificationChannel(channel)
         }
